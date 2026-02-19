@@ -2,8 +2,6 @@
 ![Python](https://img.shields.io/badge/Python-3.x-blue)
 ![Cybersecurity](https://img.shields.io/badge/Domain-Cybersecurity-red)
 ![Status](https://img.shields.io/badge/Status-Active-green)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-
 
 ## Project Overview
 
@@ -69,6 +67,11 @@ Output:
 
     Risk Score: 4
     Verdict: Suspicious
+
+## Future Enhancements
+
+- Add GUI version
+- Export scan results as PDF
 
 ## Learning Outcomes
 
