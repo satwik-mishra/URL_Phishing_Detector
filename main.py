@@ -1,32 +1,34 @@
-""" Responsibility:
-It will take URL input
-Then it will Call url_analyzer
-and then Print the result clearly """
 from url_analyzer import analyze_url
 
 
+def print_banner():
+    print("=" * 50)
+    print("        PHISHING URL DETECTOR")
+    print("     Heuristic-Based Scanner")
+    print("=" * 50)
+
+
 def main():
-    print("===================================")
-    print("      PHISHING URL DETECTOR        ")
-    print("===================================\n")
+    print_banner()
 
-    url = input("Enter URL to analyze: ").strip()
+    url = input("\nEnter URL to analyze: ").strip()
 
-    verdict, triggered_rules = analyze_url(url)
+    result = analyze_url(url)
 
-    print("\n-----------------------------------")
-    print("RESULT:")
-    print("-----------------------------------")
-    print(verdict)
+    print("\n" + "-" * 50)
+    print(f"URL: {result['url']}")
+    print(f"Risk Level: {result['risk']}")
+    print(f"Triggered Indicators: {result['score']}")
+    print("-" * 50)
 
-    if triggered_rules:
-        print("\nTriggered Rules:")
-        for rule in triggered_rules:
-            print(f"- {rule}")
+    if result["triggered_rules"]:
+        print("\n⚠ Indicators Found:")
+        for rule in result["triggered_rules"]:
+            print(f" - {rule}")
     else:
-        print("\nNo suspicious indicators detected.")
+        print("\n✅ No suspicious indicators detected.")
 
-    print("\nAnalysis Complete.")
+    print("\nScan Completed.\n")
 
 
 if __name__ == "__main__":
