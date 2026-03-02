@@ -3,65 +3,118 @@
 ![Cybersecurity](https://img.shields.io/badge/Domain-Cybersecurity-red)
 ![Status](https://img.shields.io/badge/Status-Active-green)
 
-## Project Overview
-The URL Phishing Detection Tool is a rule-based cybersecurity project that analyzes URLs 
-and determines whether they are Safe, Suspicious, or Likely Phishing.
-This tool detects common phishing patterns using predefined security rules 
-such as suspicious keywords, IP-based URLs, excessive length, HTTP usage, 
-and domain anomalies.
-This project was built to strengthen practical knowledge in defensive security 
-and understand real-world phishing attack techniques.
+# 🛡️ Heuristic-Based Phishing URL Detector
 
-## Features
-- Detects use of IP address in URL
-- Checks URL length
-- Identifies suspicious keywords
-- Detects HTTP instead of HTTPS
-- Checks excessive subdomains
-- Detects hyphen in domain name
-- Risk scoring system
-- CLI-based user interaction
-- Scan history logging
+A modular, rule-based phishing URL detection system built in Python.
 
-## How It Works
-The tool follows these steps:
-1. User inputs a URL.
-2. The URL is parsed and analyzed.
-3. Multiple phishing detection rules are applied.
-4. Each rule contributes to a risk score.
-5. Based on the final score, the URL is classified as:
-   - Safe
-   - Suspicious
-   - Likely Phishing
+This project detects potentially malicious URLs using heuristic analysis techniques commonly used in lightweight security scanners.
 
-## Risk Scoring System
-Each suspicious indicator adds 1 point to the risk score.
-| Risk Score |          Verdict     |
-|------------|----------------------|
-| 0 - 2      |      Safe            | 
-| 3 - 4      |      Suspicious      |
-| 5+         |      Likely Phishing |
+---
 
-## Usage
-Run the main file:
-    python main.py
-Enter a URL when prompted.
-Example:
-    Enter a URL: http://paypal-secure-login.com
-Output:
-    Risk Score: 4
-    Verdict: Suspicious
+## 🚀 Project Overview
 
-## Future Enhancements
-- Add GUI version
-- Export scan results as PDF
+Phishing websites often use tricks such as:
 
-## Learning Outcomes
-- Understanding phishing attack patterns
-- Writing modular Python code
-- Implementing rule-based detection systems
-- Risk scoring methodology
-- Defensive security mindset
+- Excessive subdomains
+- Suspicious keywords
+- Raw IP addresses instead of domain names
+- URL shorteners
+- Suspicious top-level domains
+- Special character obfuscation
+
+This tool analyzes a given URL and flags suspicious indicators based on multiple independent security rules.
+
+---
+
+## 🏗️ Project Architecture
+
+Phishing-Detector/
+│
+├── main.py              # CLI interface
+├── url_analyzer.py      # Rule engine & classification logic
+├── rules.py             # Individual phishing detection rules
+└── README.md
+
+### 🔹 rules.py
+Contains individual heuristic checks.
+Each rule:
+- Checks exactly one condition
+- Returns True or False
+- Does not calculate risk score
+
+### 🔹 url_analyzer.py
+- Runs all rules
+- Collects triggered indicators
+- Calculates risk level
+
+### 🔹 main.py
+- Accepts user input
+- Displays structured security report
+
+---
+
+## 🔎 Detection Rules Implemented
+
+- Excessive URL length (>100 characters)
+- Too many subdomains
+- Presence of '@' symbol
+- IP address used instead of domain
+- Suspicious phishing keywords
+- Missing HTTPS
+- Multiple hyphens in domain
+- URL shortener usage
+- Suspicious TLD (.tk, .ml, .ga, etc.)
+- Double slash redirect trick (//)
+
+---
+
+## ⚙️ Installation & Usage
+
+### 1️⃣ Clone Repository
+```bash
+git clone https://github.com/your-username/phishing-detector.git
+cd phishing-detector
+```
+### 2️⃣ Run the Tool
+```
+python main.py
+```
+### 3️⃣ Enter URL
+```
+http://192.168.1.1/login-secure-update.tk
+```
+
+🧠 Risk Classification Logic
+| Triggered Indicators | Risk Level  |
+| -------------------- | ----------- |
+| 0                    | SAFE        |
+| 1                    | LOW RISK    |
+| 2–3                  | MEDIUM RISK |
+| 4+                   | HIGH RISK   |
+
+📌 Example Output : 
+==================================================
+        PHISHING URL DETECTOR
+     Heuristic-Based Scanner
+==================================================
+
+Enter URL to analyze:
+http://192.168.1.1/login-secure-update.tk
+
+--------------------------------------------------
+URL: http://192.168.1.1/login-secure-update.tk
+Risk Level: HIGH RISK
+Triggered Indicators: 5
+--------------------------------------------------
+
+⚠ Indicators Found:
+ - Uses IP address instead of domain
+ - Contains phishing keywords
+ - Does not use HTTPS
+ - Suspicious top-level domain
+ - Multiple hyphens in domain
+
+Scan Completed.
 
 ## Author
 Satwik Mishra  
