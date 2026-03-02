@@ -1,53 +1,47 @@
-# This is the brain of this tool
-""" Its Responsibilities are :
-
-To call rule functions from rules.py
-To collect triggered rules
-To calculate score
-To decide final verdict """
 import rules
 
 
 def analyze_url(url):
-    triggered_rules = []
+    triggered = []
 
-    if rules.long_url(url):
-        triggered_rules.append("URL is too long")
+    # Map rule functions to readable names
+    rule_checks = {
+        "URL is excessively long": rules.long_url,
+        "Too many subdomains detected": rules.too_many_dots,
+        "Contains @ symbol": rules.has_at_symbol,
+        "Uses IP address instead of domain": rules.has_ip_address,
+        "Contains phishing keywords": rules.has_suspicious_keywords,
+        "Does not use HTTPS": rules.no_https,
+        "Multiple hyphens in domain": rules.has_hyphen,
+        "Uses URL shortener": rules.is_shortened_url,
+        "Suspicious top-level domain": rules.suspicious_tld,
+        "Possible redirect using // trick": rules.has_double_slash_redirect,
+    }
 
-    if rules.too_many_dots(url):
-        triggered_rules.append("Too many dots (possible subdomain abuse)")
+    # Run all rules
+    for description, rule_function in rule_checks.items():
+        try:
+            if rule_function(url):
+                triggered.append(description)
+        except Exception:
+            # Safety in case malformed URL causes crash
+            continue
 
-    if rules.has_at_symbol(url):
-        triggered_rules.append("Contains @ symbol")
+    score = len(triggered)
 
-    if rules.has_ip_address(url):
-        triggered_rules.append("Uses IP address instead of domain")
-
-    if rules.has_suspicious_keywords(url):
-        triggered_rules.append("Contains suspicious keywords")
-
-    if rules.no_https(url):
-        triggered_rules.append("Does not use HTTPS")
-
-    if rules.has_hyphen(url):
-        triggered_rules.append("Contains hyphen in domain")
-
-    if rules.is_shortened_url(url):
-        triggered_rules.append("Uses URL shortening service")
-
-    if rules.suspicious_tld(url):
-        triggered_rules.append("Uses suspicious top-level domain")
-
-    score = len(triggered_rules)
-
-    # Decision logic
-    if score >= 3:
-        verdict = "⚠️ HIGH RISK - Likely Phishing"
-    elif score == 2:
-        verdict = "⚠️ MEDIUM RISK - Suspicious"
+    # Risk Classification
+    if score >= 4:
+        risk = "HIGH RISK"
+    elif score >= 2:
+        risk = "MEDIUM RISK"
     elif score == 1:
-        verdict = "⚠️ LOW RISK - Slightly Suspicious"
+        risk = "LOW RISK"
     else:
-        verdict = "✅ SAFE - No strong phishing indicators"
+        risk = "SAFE"
 
-    return verdict, triggered_rules
+    return {
+        "url": url,
+        "score": score,
+        "risk": risk,
+        "triggered_rules": triggered
+    }
