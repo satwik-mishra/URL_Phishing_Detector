@@ -28,12 +28,14 @@ This tool analyzes a given URL and flags suspicious indicators based on multiple
 
 ## 🏗️ Project Architecture
 
+```
 Phishing-Detector/
 │
 ├── main.py              # CLI interface
 ├── url_analyzer.py      # Rule engine & classification logic
 ├── rules.py             # Individual phishing detection rules
 └── README.md
+```
 
 ### 🔹 rules.py
 Contains individual heuristic checks.
