@@ -119,4 +119,4 @@ Scan Completed.
 ## Author
 Satwik Mishra  
 B.Tech CSE (Cybersecurity)  
-Security Learner | Python Developer
+Security Learner | Frontend Developer
