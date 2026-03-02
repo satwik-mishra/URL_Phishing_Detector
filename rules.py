@@ -1,45 +1,153 @@
-""" Each rule should:
+"""
+Each rule:
+- Checks only ONE condition
+- Returns True or False
+- Does NOT calculate score
+"""
 
-Check one condition
-Return True or False
-It will not calculate score """
 import re
+from urllib.parse import urlparse
+
+
+def extract_domain(url):
+    """
+    Extract domain safely from URL.
+    """
+    parsed = urlparse(url)
+    return parsed.netloc
+
+
+# ---------------------------
+# Length Based Rule
+# ---------------------------
+
 def long_url(url):
-    return len(url)>75  # this will return true if the length of url is more than 75 characters
+    """
+    Very long URLs are commonly used in phishing.
+    """
+    return len(url) > 100
+
+
+# ---------------------------
+# Subdomain Abuse
+# ---------------------------
 
 def too_many_dots(url):
-    return url.count('.')>3  #phising URLs have too many subdomains thats why we are checking whether the number of subdomains are more than 3
+    """
+    Excessive subdomains are suspicious.
+    """
+    domain = extract_domain(url)
+    return domain.count('.') > 2
+
+
+# ---------------------------
+# @ Symbol Trick
+# ---------------------------
 
 def has_at_symbol(url):
+    """
+    Attackers use @ to hide real destination.
+    """
     return "@" in url
 
-def has_ip_address(url):
-    ip_pattern = r"http[s]?://\d+\.\d+\.\d+\.\d+"
-    return re.search(ip_pattern, url) is not None
 
-def has_suspicious_keywords(url): 
-    keywords = ["login", "verify", "secure", "account", "bank", "update"]   # these are common phishing words
-    for word in keywords:
-        if word in url.lower():
-            return True
-    return False
+# ---------------------------
+# IP Address Instead of Domain
+# ---------------------------
+
+def has_ip_address(url):
+    """
+    Detect raw IPv4 address usage.
+    """
+    domain = extract_domain(url)
+    ip_pattern = r"^\d+\.\d+\.\d+\.\d+$"
+    return re.match(ip_pattern, domain) is not None
+
+
+# ---------------------------
+# Suspicious Keywords
+# ---------------------------
+
+def has_suspicious_keywords(url):
+    """
+    Common phishing lure words.
+    """
+    keywords = [
+        "login", "verify", "secure",
+        "account", "bank", "update",
+        "confirm", "password", "signin"
+    ]
+
+    url_lower = url.lower()
+    return any(word in url_lower for word in keywords)
+
+
+# ---------------------------
+# HTTPS Check
+# ---------------------------
 
 def no_https(url):
-    return not url.startswith("https://")
+    """
+    Phishing sites often avoid HTTPS.
+    """
+    return not url.lower().startswith("https://")
+
+
+# ---------------------------
+# Hyphen Abuse
+# ---------------------------
 
 def has_hyphen(url):
-    return "-" in url
+    """
+    Multiple hyphens in domain look suspicious.
+    """
+    domain = extract_domain(url)
+    return domain.count('-') >= 2
+
+
+# ---------------------------
+# URL Shortener Detection
+# ---------------------------
 
 def is_shortened_url(url):
-    shorteners = ["bit.ly", "tinyurl.com", "goo.gl", "t.co"]
-    for shortener in shorteners:
-        if shortener in url:
-            return True
-    return False
+    """
+    Shorteners hide actual destination.
+    """
+    domain = extract_domain(url)
+
+    shorteners = [
+        "bit.ly", "tinyurl.com", "goo.gl",
+        "t.co", "is.gd", "buff.ly"
+    ]
+
+    return domain in shorteners
+
+
+# ---------------------------
+# Suspicious TLD
+# ---------------------------
 
 def suspicious_tld(url):
-    suspicious_domains = [".tk", ".ml", ".ga", ".cf", ".gq"]
-    for tld in suspicious_domains:
-        if url.endswith(tld):
-            return True
-    return False
+    """
+    Cheap/free TLDs commonly abused.
+    """
+    domain = extract_domain(url)
+
+    suspicious_tlds = [
+        ".tk", ".ml", ".ga",
+        ".cf", ".gq", ".xyz", ".top"
+    ]
+
+    return any(domain.endswith(tld) for tld in suspicious_tlds)
+
+
+# ---------------------------
+# Double Slash Redirect Trick
+# ---------------------------
+
+def has_double_slash_redirect(url):
+    """
+    Example:
+    http://example.com//malicious.com
+    """
+    return url.count("//") > 1
