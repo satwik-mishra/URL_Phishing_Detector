@@ -1,10 +1,8 @@
 """ Each rule should:
 
 Check one condition
-
 Return True or False
-
-Not calculate score """
+It will not calculate score """
 import re
 def long_url(url):
     return len(url)>75  # this will return true if the length of url is more than 75 characters
